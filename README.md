@@ -7,7 +7,7 @@ Chrome extension: search open tabs, bookmarks, and saved shortcuts from a quick 
 
 **Auto open tab:** If there’s only one result, that tab or URL opens automatically.
 
-**Open / close:** `Alt+Space` (change under `chrome://extensions/shortcuts`).
+**Open / close:** `Alt+Space` (change under `chrome://extensions/shortcuts`). **`Esc`** closes the launcher.
 
 **Load locally:** Chrome → Extensions → Developer mode → Load unpacked → this folder.
 

@@ -378,9 +378,16 @@
   }
 
   // ── Keyboard ───────────────────────────────────────
+  // Window capture runs before page handlers; input capture catches Esc if the field ate the first dispatch.
   function onKey(e) {
     if (!document.getElementById('tl-root')) return;
-    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeLauncher(); return; }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      closeLauncher();
+      return;
+    }
     if (e.key === 'ArrowDown') {
       e.preventDefault(); e.stopPropagation();
       selectedIdx = Math.min(selectedIdx + 1, filtered.length - 1);
@@ -394,7 +401,17 @@
       openSelected();
     }
   }
-  document.addEventListener('keydown', onKey, true);
+
+  function onInputEscape(e) {
+    if (e.key !== 'Escape') return;
+    if (!document.getElementById('tl-root')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    closeLauncher();
+  }
+
+  window.addEventListener('keydown', onKey, true);
+  inputEl.addEventListener('keydown', onInputEscape, true);
 
   inputEl.addEventListener('input', () => {
     selectedIdx = 0;
@@ -411,7 +428,8 @@
   // ── Close ──────────────────────────────────────────
   function closeLauncher() {
     clearTimer();
-    document.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('keydown', onKey, true);
+    inputEl.removeEventListener('keydown', onInputEscape, true);
     root.remove();
   }
 
