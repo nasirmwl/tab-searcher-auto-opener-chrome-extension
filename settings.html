@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Tab Launcher — Settings</title>
+  <link rel="stylesheet" href="settings.css"/>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo-row">
+        <div class="logo">
+          <svg viewBox="0 0 16 16" fill="none" width="18" height="18">
+            <circle cx="6.5" cy="6.5" r="5" stroke="#a78bfa" stroke-width="1.5"/>
+            <path d="M11 11L14.5 14.5" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Tab Launcher</h1>
+          <p class="subtitle">Settings & Shortcuts</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Shortcuts -->
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Custom Shortcuts</h2>
+          <p class="desc">Type a single key → auto-jumps to that URL. Switches to open tab or creates a new one.</p>
+        </div>
+        <button class="btn-add" id="btn-add">+ Add</button>
+      </div>
+      <div id="sc-list"></div>
+      <div class="empty-sc" id="empty-sc">No shortcuts yet — add one above.</div>
+    </section>
+
+    <!-- Delay -->
+    <section class="card">
+      <h2>Auto-fire Delay</h2>
+      <p class="desc">How long after you stop typing before the top result opens automatically.</p>
+      <div class="delay-row">
+        <input type="range" id="delay" min="100" max="1000" step="50" value="300"/>
+        <div class="delay-val"><span id="delay-val">300</span><span class="ms-unit">ms</span></div>
+      </div>
+      <div class="delay-ends"><span>100ms (fast)</span><span>1000ms (slow)</span></div>
+    </section>
+
+    <!-- Hotkey -->
+    <section class="card">
+      <h2>Global Hotkey</h2>
+      <p class="desc">Change the keyboard shortcut that opens Tab Launcher.</p>
+      <div class="hotkey-row">
+        <kbd>Alt</kbd><span class="plus">+</span><kbd>Space</kbd>
+        <a href="#" class="link" id="change-hotkey">Change in Chrome →</a>
+      </div>
+    </section>
+
+    <div class="save-row">
+      <span class="saved" id="saved">✓ Saved</span>
+      <button class="btn-save" id="btn-save">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="overlay" id="overlay" style="display:none">
+    <div class="modal">
+      <h3 id="modal-title">Add Shortcut</h3>
+      <div class="field">
+        <label>Label</label>
+        <input type="text" id="f-label" placeholder="e.g. Jira" autocomplete="off"/>
+      </div>
+      <div class="field">
+        <label>URL</label>
+        <input type="text" id="f-url" placeholder="e.g. https://yourco.atlassian.net" autocomplete="off"/>
+      </div>
+      <div class="field">
+        <label>Key <span class="field-note">(single letter or digit)</span></label>
+        <input type="text" id="f-key" placeholder="e.g. jir or gh" maxlength="10" class="key-field" autocomplete="off"/>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="btn-cancel">Cancel</button>
+        <button class="btn-confirm" id="btn-confirm">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Launcher",
+  "version": "4.0",
+  "description": "Spotlight-style tab switcher. Alt+Space to open.",
+  "permissions": ["tabs", "storage", "bookmarks", "history", "windows", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "options_page": "settings.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [{
+    "resources": ["launcher.css", "launcher.js"],
+    "matches": ["<all_urls>"]
+  }],
+  "commands": {
+    "toggle-launcher": {
+      "suggested_key": {
+        "default": "Alt+Space",
+        "mac": "Alt+Space"
+      },
+      "description": "Toggle Tab Launcher"
+    }
+  }
+}
