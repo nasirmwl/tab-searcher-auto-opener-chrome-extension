@@ -16,3 +16,5 @@ Chrome extension: search open tabs, bookmarks, and saved shortcuts from a quick 
 
 
 Does not run on `chrome://`, the Web Store, or other restricted pages—use a normal website tab.
+
+![Tab Launcher](image.png)

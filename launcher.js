@@ -47,6 +47,13 @@
     </div>`;
   document.body.appendChild(root);
 
+  // Esc is handled in the page MAIN world (see background.js) so preventDefault runs before the
+  // focused input’s default behavior. That path dispatches this event into the isolated world.
+  function onEscFromMain() {
+    if (document.getElementById('tl-root')) closeLauncher();
+  }
+  document.addEventListener('tl-esc-close', onEscFromMain);
+
   const inputEl   = document.getElementById('tl-input');
   const resultsEl = document.getElementById('tl-results');
   const timerBar  = document.getElementById('tl-timer-bar');
@@ -378,16 +385,9 @@
   }
 
   // ── Keyboard ───────────────────────────────────────
-  // Window capture runs before page handlers; input capture catches Esc if the field ate the first dispatch.
+  // Escape → MAIN-world bridge + tl-esc-close (see background.js). Isolated listeners lose to page.
   function onKey(e) {
     if (!document.getElementById('tl-root')) return;
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      closeLauncher();
-      return;
-    }
     if (e.key === 'ArrowDown') {
       e.preventDefault(); e.stopPropagation();
       selectedIdx = Math.min(selectedIdx + 1, filtered.length - 1);
@@ -402,16 +402,7 @@
     }
   }
 
-  function onInputEscape(e) {
-    if (e.key !== 'Escape') return;
-    if (!document.getElementById('tl-root')) return;
-    e.preventDefault();
-    e.stopPropagation();
-    closeLauncher();
-  }
-
   window.addEventListener('keydown', onKey, true);
-  inputEl.addEventListener('keydown', onInputEscape, true);
 
   inputEl.addEventListener('input', () => {
     selectedIdx = 0;
@@ -428,8 +419,8 @@
   // ── Close ──────────────────────────────────────────
   function closeLauncher() {
     clearTimer();
+    document.removeEventListener('tl-esc-close', onEscFromMain);
     window.removeEventListener('keydown', onKey, true);
-    inputEl.removeEventListener('keydown', onInputEscape, true);
     root.remove();
   }
 

@@ -16,7 +16,24 @@ chrome.commands.onCommand.addListener(async (command) => {
   if (restricted) return;
 
   try {
-    // Check if already open — toggle off
+    // MAIN-world Esc bridge: page scripts run before isolated listeners, so Escape on the focused
+    // input was blurring first. Handler lives in page context; isolated code listens for tl-esc-close.
+    const installMainEscBridge = () => {
+      if (window.__tlEscHandler) return;
+      window.__tlEscHandler = (e) => {
+        if (e.key !== 'Escape') return;
+        if (!document.getElementById('tl-root')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        document.dispatchEvent(
+          new CustomEvent('tl-esc-close', { bubbles: true, composed: true })
+        );
+      };
+      window.addEventListener('keydown', window.__tlEscHandler, true);
+    };
+
+    // Check if already open — toggle off (ask isolated launcher to tear down timers + listeners)
     const [check] = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: () => !!document.getElementById('tl-root')
@@ -25,14 +42,23 @@ chrome.commands.onCommand.addListener(async (command) => {
     if (check?.result) {
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
+        world: 'MAIN',
         func: () => {
-          document.getElementById('tl-root')?.remove();
+          document.dispatchEvent(
+            new CustomEvent('tl-esc-close', { bubbles: true, composed: true })
+          );
         }
       });
       return;
     }
 
-    // Inject CSS + JS
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      world: 'MAIN',
+      func: installMainEscBridge
+    });
+
+    // Inject CSS + JS (isolated world)
     await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ['launcher.css'] });
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['launcher.js'] });
 
